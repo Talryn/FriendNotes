@@ -103,7 +103,7 @@ function FriendNotes:OnEnable()
 end
 
 function FriendNotes:OnDisable()
-    -- Unregister/hook anything we setup when enabled
+    -- Unregister/unhook anything we setup when enabled
     self:UnhookScript(GameTooltip, "OnTooltipSetUnit")
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")	
 end
