@@ -1,0 +1,14 @@
+## Interface: 30300
+## Title: Friend Notes
+## Notes: Displays friend notes in unit tooltips, at logon, and in /who results.
+## Author: Talryn
+## Version: @project-version@
+## OptionalDeps: Ace3, LibDeformat-3.0
+## X-Embeds: Ace3
+## X-Category: Interface Enhancements 
+
+embeds.xml
+
+locale.xml
+
+FriendNotes.lua
