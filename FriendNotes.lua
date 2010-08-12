@@ -15,69 +15,78 @@ local defaults = {
 	    showTooltips = true,
 	    showLogon = true,
 	    showWho = true,
-		wrapTooltip = true,
+		wrapTooltip = false,
 		wrapTooltipLength = 50	
     }
 }
 
-local options = {
-    name = "Friend Notes",
-    type = 'group',
-    args = {
-	    showTooltips = {
-            name = L["Show Tooltips"],
-            desc = L["Toggles the showing of friends notes in tooltips."],
-            type = "toggle",
-            set = function(info,val) self.db.profile.showTooltips = val end,
-            get = function(info) return self.db.profile.showTooltips end,
-			order = 10
-        },
-	    showLogon = {
-            name = L["Show on Logon"],
-            desc = L["Toggles the display of friend notes when a friend logs on."],
-            type = "toggle",
-            set = function(info,val) self.db.profile.showLogon = val end,
-            get = function(info) return self.db.profile.showLogon end,
-			order = 20
-        },
-	    showWho = {
-            name = L["Show on /who"],
-            desc = L["Toggles the display of friend notes for /who results in the chat window."],
-            type = "toggle",
-            set = function(info,val) self.db.profile.showWho = val end,
-            get = function(info) return self.db.profile.showWho end,
-			order = 30
-        },
-		displayheader = {
-			order = 50,
-			type = "header",
-			name = L["Tooltip Options"],
-		},
-        wrapTooltip = {
-            name = L["Wrap Tooltips"],
-            desc = L["Wrap notes in tooltips"],
-            type = "toggle",
-            set = function(info,val) self.db.profile.wrapTooltip = val end,
-            get = function(info) return self.db.profile.wrapTooltip end,
-			order = 60
-        },
-        wrapTooltipLength = {
-            name = L["Tooltip Wrap Length"],
-            desc = L["Maximum line length for a tooltip"],
-            type = "range",
-			min = 20,
-			max = 80,
-			step = 1,
-            set = function(info,val) self.db.profile.wrapTooltipLength = val end,
-            get = function(info) return self.db.profile.wrapTooltipLength end,
-			order = 70
+local options
+
+function FriendNotes:GetOptions()
+    options = {
+        name = "Friend Notes",
+        type = 'group',
+        args = {
+    	    showTooltips = {
+                name = L["Show Tooltips"],
+                desc = L["Toggles the showing of friends notes in tooltips."],
+                type = "toggle",
+                set = function(info,val) self.db.profile.showTooltips = val end,
+                get = function(info) return self.db.profile.showTooltips end,
+    			order = 10
+            },
+    	    showLogon = {
+                name = L["Show on Logon"],
+                desc = L["Toggles the display of friend notes when a friend logs on."],
+                type = "toggle",
+                set = function(info,val) self.db.profile.showLogon = val end,
+                get = function(info) return self.db.profile.showLogon end,
+    			order = 20
+            },
+    	    showWho = {
+                name = L["Show on /who"],
+                desc = L["Toggles the display of friend notes for /who results in the chat window."],
+                type = "toggle",
+                set = function(info,val) self.db.profile.showWho = val end,
+                get = function(info) return self.db.profile.showWho end,
+    			order = 30
+            },
+    		displayheader = {
+    			order = 50,
+    			type = "header",
+    			name = L["Tooltip Options"],
+    		},
+            wrapTooltip = {
+                name = L["Wrap Tooltips"],
+                desc = L["Wrap notes in tooltips"],
+                type = "toggle",
+                set = function(info,val) self.db.profile.wrapTooltip = val end,
+                get = function(info) return self.db.profile.wrapTooltip end,
+    			order = 60
+            },
+            wrapTooltipLength = {
+                name = L["Tooltip Wrap Length"],
+                desc = L["Maximum line length for a tooltip"],
+                type = "range",
+    			min = 20,
+    			max = 80,
+    			step = 1,
+                set = function(info,val) self.db.profile.wrapTooltipLength = val end,
+                get = function(info) return self.db.profile.wrapTooltipLength end,
+    			order = 70
+            }
         }
     }
-}
+
+    return options
+end
 
 function FriendNotes:OnInitialize()
     -- Load the data
     self.db = LibStub("AceDB-3.0"):New("FriendNotesDB", defaults, "Default")
+
+    -- Get the options table
+    options = self:GetOptions()
 
     -- Register the options table
     LibStub("AceConfig-3.0"):RegisterOptionsTable("FriendNotes", options)
@@ -108,7 +117,7 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
         if note then
     		if self.db.profile.wrapTooltip == true then
             	tooltip:AddLine(YELLOW..L["Friend: "]..WHITE..
-    				wrap(note,self:GetWrapTooltipLength(),"    ","", 4))
+    				wrap(note,self.db.profile.wrapTooltipLength,"    ","", 4))
             else
             	tooltip:AddLine(YELLOW..L["Friend: "]..WHITE..note)
     		end
@@ -117,7 +126,7 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
 end
 
 function FriendNotes:GetFriendNote(friendName)
-    numFriends = GetNumFriends()
+    local numFriends = GetNumFriends()
     if numFriends > 0 then
         for i = 1, numFriends do
             name, level, class, area, connected, status, note = GetFriendInfo(i)
