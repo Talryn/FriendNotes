@@ -1,4 +1,4 @@
-FriendNotes = LibStub("AceAddon-3.0"):NewAddon("FriendNotes", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceTimer-3.0")
+local FriendNotes = LibStub("AceAddon-3.0"):NewAddon("FriendNotes", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceTimer-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale("FriendNotes", true)
 
