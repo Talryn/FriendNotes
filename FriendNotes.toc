@@ -1,4 +1,5 @@
 ## Interface: 30300
+## X-Compatible-With: 40000
 ## Title: Friend Notes
 ## Notes: Displays friend notes in unit tooltips, at logon, and in /who results.
 ## Author: Talryn
