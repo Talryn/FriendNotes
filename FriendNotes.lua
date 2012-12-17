@@ -1,8 +1,9 @@
-local FriendNotes = LibStub("AceAddon-3.0"):NewAddon("FriendNotes", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceTimer-3.0")
+local _G = getfenv(0)
 
-local L = LibStub("AceLocale-3.0"):GetLocale("FriendNotes", true)
+local FriendNotes = _G.LibStub("AceAddon-3.0"):NewAddon("FriendNotes", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceTimer-3.0")
 
-local LibDeformat = LibStub("LibDeformat-3.0")
+local L = _G.LibStub("AceLocale-3.0"):GetLocale("FriendNotes", true)
+local LibDeformat = _G.LibStub("LibDeformat-3.0")
 
 local GREEN = "|cff00ff00"
 local YELLOW = "|cffffff00"
@@ -19,6 +20,21 @@ local defaults = {
 		wrapTooltipLength = 50	
     }
 }
+
+local function wrap(str, limit, indent, indent1,offset)
+	indent = indent or ""
+	indent1 = indent1 or indent
+	limit = limit or 72
+	offset = offset or 0
+	local here = 1-#indent1-offset
+	return indent1..str:gsub("(%s+)()(%S+)()",
+						function(sp, st, word, fi)
+							if fi-here > limit then
+								here = st - #indent
+								return "\n"..indent..word
+							end
+						end)
+end
 
 local options
 
@@ -83,20 +99,20 @@ end
 
 function FriendNotes:OnInitialize()
     -- Load the data
-    self.db = LibStub("AceDB-3.0"):New("FriendNotesDB", defaults, "Default")
+    self.db = _G.LibStub("AceDB-3.0"):New("FriendNotesDB", defaults, "Default")
 
     -- Get the options table
     options = self:GetOptions()
 
     -- Register the options table
-    LibStub("AceConfig-3.0"):RegisterOptionsTable("FriendNotes", options)
-	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
+    _G.LibStub("AceConfig-3.0"):RegisterOptionsTable("FriendNotes", options)
+	self.optionsFrame = _G.LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
 	    "FriendNotes", "Friend Notes")
 end
 
 function FriendNotes:OnEnable()
     -- Hook the game tooltip so we can add friend notes
-    self:HookScript(GameTooltip, "OnTooltipSetUnit")
+    self:HookScript(_G.GameTooltip, "OnTooltipSetUnit")
 
 	-- Register to receive the chat messages to watch for logons and who requests
 	self:RegisterEvent("CHAT_MSG_SYSTEM")
@@ -104,7 +120,7 @@ end
 
 function FriendNotes:OnDisable()
     -- Unregister/unhook anything we setup when enabled
-    self:UnhookScript(GameTooltip, "OnTooltipSetUnit")
+    self:UnhookScript(_G.GameTooltip, "OnTooltipSetUnit")
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")	
 end
 
@@ -112,8 +128,8 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
     if self.db.profile.showTooltips == false then return end
     
     local name, unitid = tooltip:GetUnit()
-    if UnitExists(unitid) then
-        note = self:GetFriendNote(name)
+    if _G.UnitExists(unitid) then
+        local note = self:GetFriendNote(name)
         if note then
     		if self.db.profile.wrapTooltip == true then
             	tooltip:AddLine(YELLOW..L["Friend: "]..WHITE..
@@ -126,10 +142,11 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
 end
 
 function FriendNotes:GetFriendNote(friendName)
-    local numFriends = GetNumFriends()
+    local numFriends = _G.GetNumFriends()
     if numFriends > 0 then
         for i = 1, numFriends do
-            name, level, class, area, connected, status, note = GetFriendInfo(i)
+            local name, level, class, area, connected, status, note = 
+				_G.GetFriendInfo(i)
             if friendName == name then
                 return note
             end
@@ -141,13 +158,13 @@ function FriendNotes:CHAT_MSG_SYSTEM(event, message)
 	local name = nil
 	
 	if self.db.profile.showWho == true then
-	    name = LibDeformat(message, WHO_LIST_FORMAT)
+	    name = LibDeformat(message, _G.WHO_LIST_FORMAT)
 	end
 	if not name and self.db.profile.showWho == true then 
-	    name = LibDeformat(message, WHO_LIST_GUILD_FORMAT)
+	    name = LibDeformat(message, _G.WHO_LIST_GUILD_FORMAT)
 	end
 	if not name and self.db.profile.showLogon == true then 
-	    name = LibDeformat(message, ERR_FRIEND_ONLINE_SS)
+	    name = LibDeformat(message, _G.ERR_FRIEND_ONLINE_SS)
 	end
 	if name then
 		self:ScheduleTimer("DisplayNote", 0.1, name)
@@ -159,19 +176,4 @@ function FriendNotes:DisplayNote(name)
 	if note then
 	    self:Print(YELLOW..name..L[" (friend): "]..WHITE..note)
 	end
-end
-
-local function wrap(str, limit, indent, indent1,offset)
-	indent = indent or ""
-	indent1 = indent1 or indent
-	limit = limit or 72
-	offset = offset or 0
-	local here = 1-#indent1-offset
-	return indent1..str:gsub("(%s+)()(%S+)()",
-						function(sp, st, word, fi)
-							if fi-here > limit then
-								here = st - #indent
-								return "\n"..indent..word
-							end
-						end)
 end
