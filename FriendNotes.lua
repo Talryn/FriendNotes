@@ -98,29 +98,29 @@ function FriendNotes:GetOptions()
 end
 
 function FriendNotes:OnInitialize()
-    -- Load the data
-    self.db = _G.LibStub("AceDB-3.0"):New("FriendNotesDB", defaults, "Default")
+	-- Load the data
+	self.db = _G.LibStub("AceDB-3.0"):New("FriendNotesDB", defaults, "Default")
 
-    -- Get the options table
-    options = self:GetOptions()
+	-- Get the options table
+	options = self:GetOptions()
 
-    -- Register the options table
-    _G.LibStub("AceConfig-3.0"):RegisterOptionsTable("FriendNotes", options)
+	-- Register the options table
+	_G.LibStub("AceConfig-3.0"):RegisterOptionsTable("FriendNotes", options)
 	self.optionsFrame = _G.LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-	    "FriendNotes", "Friend Notes")
+		"FriendNotes", "Friend Notes")
 end
 
 function FriendNotes:OnEnable()
-    -- Hook the game tooltip so we can add friend notes
-    self:HookScript(_G.GameTooltip, "OnTooltipSetUnit")
+	-- Hook the game tooltip so we can add friend notes
+	self:HookScript(_G.GameTooltip, "OnTooltipSetUnit")
 
 	-- Register to receive the chat messages to watch for logons and who requests
 	self:RegisterEvent("CHAT_MSG_SYSTEM")
 end
 
 function FriendNotes:OnDisable()
-    -- Unregister/unhook anything we setup when enabled
-    self:UnhookScript(_G.GameTooltip, "OnTooltipSetUnit")
+	-- Unregister/unhook anything we setup when enabled
+	self:UnhookScript(_G.GameTooltip, "OnTooltipSetUnit")
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")	
 end
 
