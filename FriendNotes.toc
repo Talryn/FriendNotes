@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: Friend Notes
 ## Notes: Displays friend notes in unit tooltips, at logon, and in /who results.
 ## Author: Talryn
