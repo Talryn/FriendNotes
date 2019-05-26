@@ -5,7 +5,9 @@
 ## Version: @project-version@
 ## OptionalDeps: Ace3, LibDeformat-3.0
 ## X-Embeds: Ace3
-## X-Category: Interface Enhancements 
+## X-Category: Interface Enhancements
+## X-Curse-Project-ID: 25543
+## X-WoWI-ID: 17699
 
 embeds.xml
 
