@@ -17,7 +17,7 @@ local defaults = {
 	    showLogon = true,
 	    showWho = true,
 		wrapTooltip = false,
-		wrapTooltipLength = 50	
+		wrapTooltipLength = 50
     }
 }
 
@@ -121,12 +121,12 @@ end
 function FriendNotes:OnDisable()
 	-- Unregister/unhook anything we setup when enabled
 	self:UnhookScript(_G.GameTooltip, "OnTooltipSetUnit")
-	self:UnregisterEvent("CHAT_MSG_SYSTEM")	
+	self:UnregisterEvent("CHAT_MSG_SYSTEM")
 end
 
 function FriendNotes:OnTooltipSetUnit(tooltip, ...)
     if self.db.profile.showTooltips == false then return end
-    
+
     local name, unitid = tooltip:GetUnit()
     if _G.UnitExists(unitid) then
         local note = self:GetFriendNote(name)
@@ -142,11 +142,11 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
 end
 
 function FriendNotes:GetFriendNote(friendName)
-    local numFriends = _G.GetNumFriends()
+    local numFriends = C_FriendList.GetNumFriends()
     if numFriends > 0 then
         for i = 1, numFriends do
-            local name, level, class, area, connected, status, note = 
-				_G.GetFriendInfo(i)
+            local name, level, class, area, connected, status, note =
+				C_FriendList.GetFriendInfoByIndex(i)
             if friendName == name then
                 return note
             end
@@ -156,14 +156,14 @@ end
 
 function FriendNotes:CHAT_MSG_SYSTEM(event, message)
 	local name = nil
-	
+
 	if self.db.profile.showWho == true then
 	    name = LibDeformat(message, _G.WHO_LIST_FORMAT)
 	end
-	if not name and self.db.profile.showWho == true then 
+	if not name and self.db.profile.showWho == true then
 	    name = LibDeformat(message, _G.WHO_LIST_GUILD_FORMAT)
 	end
-	if not name and self.db.profile.showLogon == true then 
+	if not name and self.db.profile.showLogon == true then
 	    name = LibDeformat(message, _G.ERR_FRIEND_ONLINE_SS)
 	end
 	if name then
