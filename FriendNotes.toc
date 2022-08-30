@@ -12,6 +12,7 @@
 ## X-Category: Interface Enhancements
 ## X-Curse-Project-ID: 25543
 ## X-WoWI-ID: 17699
+## X-Wago-ID: RqGYapGg
 
 embeds.xml
 
