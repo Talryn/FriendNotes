@@ -138,7 +138,8 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
     if self.db.profile.showTooltips == false then return end
 
     local name, unitid = tooltip:GetUnit()
-    if _G.UnitExists(unitid) then
+    if _G.UnitExists(unitid) and _G.UnitIsPlayer(unitid) then
+		name = _G.GetUnitName(unitid, true) or name
         local note = self:GetFriendNote(name)
         if note then
     		if self.db.profile.wrapTooltip == true then
@@ -152,16 +153,8 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
 end
 
 function FriendNotes:GetFriendNote(friendName)
-    local numFriends = C_FriendList.GetNumFriends()
-    if numFriends > 0 then
-        for i = 1, numFriends do
-            local name, level, class, area, connected, status, note =
-				C_FriendList.GetFriendInfoByIndex(i)
-            if friendName == name then
-                return note
-            end
-        end
-    end
+	local info = C_FriendList.GetFriendInfo(friendName)
+    return info and info.notes
 end
 
 function FriendNotes:CHAT_MSG_SYSTEM(event, message)
