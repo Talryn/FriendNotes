@@ -111,8 +111,13 @@ function FriendNotes:OnInitialize()
 end
 
 function FriendNotes:OnEnable()
-	-- Hook the game tooltip so we can add friend notes
-	self:HookScript(_G.GameTooltip, "OnTooltipSetUnit")
+	-- Hook the game tooltip so we can add lines
+	-- If the new tooltip API is present it, use it, otherwise use the older one.
+	if C_TooltipInfo and TooltipDataProcessor then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, OnTooltipSetUnit)
+	else
+		self:HookScript(_G.GameTooltip, "OnTooltipSetUnit")
+	end
 
 	-- Register to receive the chat messages to watch for logons and who requests
 	self:RegisterEvent("CHAT_MSG_SYSTEM")
