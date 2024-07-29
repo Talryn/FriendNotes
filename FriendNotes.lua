@@ -110,6 +110,10 @@ function FriendNotes:OnInitialize()
 		"FriendNotes", "Friend Notes")
 end
 
+local function OnTooltipSetUnit(tooltip, data, ...)
+	FriendNotes:OnTooltipSetUnit(tooltip, data, ...)
+end
+
 function FriendNotes:OnEnable()
 	-- Hook the game tooltip so we can add lines
 	-- If the new tooltip API is present it, use it, otherwise use the older one.
@@ -130,6 +134,7 @@ function FriendNotes:OnDisable()
 end
 
 function FriendNotes:OnTooltipSetUnit(tooltip, ...)
+	if tooltip ~= _G.GameTooltip then return end
     if self.db.profile.showTooltips == false then return end
 
     local name, unitid = tooltip:GetUnit()
