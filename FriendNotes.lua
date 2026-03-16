@@ -1,3 +1,4 @@
+local ADDON_NAME, addon = ...
 local FriendNotes = _G.LibStub("AceAddon-3.0"):NewAddon("FriendNotes", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0",
     "AceTimer-3.0")
 
@@ -124,15 +125,27 @@ function FriendNotes:OnEnable()
 
     -- Register to receive the chat messages to watch for logons and who requests
     self:RegisterEvent("CHAT_MSG_SYSTEM")
+
+    addon.restricted = false
+    addon.restrictedEvents = C_EventUtils and C_EventUtils.IsEventValid and
+        C_EventUtils.IsEventValid("ADDON_RESTRICTION_STATE_CHANGED")
+    -- Track addon restriction state
+    if addon.restrictedEvents then
+        self:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
+    end
 end
 
 function FriendNotes:OnDisable()
     -- Unregister/unhook anything we setup when enabled
     self:UnhookScript(_G.GameTooltip, "OnTooltipSetUnit")
     self:UnregisterEvent("CHAT_MSG_SYSTEM")
+    if addon.restrictedEvents then
+        self:UnregisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
+    end
 end
 
 function FriendNotes:OnTooltipSetUnit(tooltip, ...)
+    if addon.restricted then return end
     if tooltip ~= _G.GameTooltip then return end
     if self.db.profile.showTooltips == false then return end
 
@@ -178,4 +191,8 @@ function FriendNotes:DisplayNote(name)
     if note then
         self:Print(YELLOW .. name .. L[" (friend): "] .. WHITE .. note)
     end
+end
+
+function FriendNotes:ADDON_RESTRICTION_STATE_CHANGED(event, restrictType, restrictState)
+    addon.restricted = restrictState ~= Enum.AddOnRestrictionState.Inactive
 end
