@@ -131,6 +131,7 @@ function FriendNotes:OnEnable()
         C_EventUtils.IsEventValid("ADDON_RESTRICTION_STATE_CHANGED")
     -- Track addon restriction state
     if addon.restrictedEvents then
+        self:CheckRestrictedState()
         self:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
     end
 end
@@ -193,6 +194,23 @@ function FriendNotes:DisplayNote(name)
     end
 end
 
+function FriendNotes:SetRestrictedState(restricted)
+    addon.restricted = restricted
+end
+
+function FriendNotes:CheckRestrictedState()
+    local restricted = false
+    if C_RestrictedActions and C_RestrictedActions.GetAddOnRestrictionState then
+        for _, i in _G.pairs(Enum.AddOnRestrictionType) do
+            local _, state = C_RestrictedActions.GetAddOnRestrictionState(i)
+            if state ~= Enum.AddOnRestrictionState.Inactive then
+                restricted = true
+            end
+        end
+    end
+    self:SetRestrictedState(restricted)
+end
+
 function FriendNotes:ADDON_RESTRICTION_STATE_CHANGED(event, restrictType, restrictState)
-    addon.restricted = restrictState ~= Enum.AddOnRestrictionState.Inactive
+    self:SetRestrictedState(restrictState ~= Enum.AddOnRestrictionState.Inactive)
 end
