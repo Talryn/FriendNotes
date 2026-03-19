@@ -36,6 +36,16 @@ local function wrap(str, limit, indent, indent1, offset)
         end)
 end
 
+function addon.alwaysTrue()
+    return true
+end
+
+function addon.alwaysFalse()
+    return false
+end
+
+addon.issecretvalue = (_G.issecretvalue and _G.type(_G.issecretvalue) == "function") and _G.issecretvalue or addon.alwaysFalse
+
 local options
 
 function FriendNotes:GetOptions()
@@ -151,7 +161,7 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
     if self.db.profile.showTooltips == false then return end
 
     local name, unitid = tooltip:GetUnit()
-    if unitid and not issecretvalue(unitid) and _G.UnitExists(unitid) and 
+    if unitid and not addon.issecretvalue(unitid) and _G.UnitExists(unitid) and
         _G.UnitIsPlayer(unitid) then
         name = _G.GetUnitName(unitid, true) or name
         local note = self:GetFriendNote(name)
