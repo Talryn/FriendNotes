@@ -151,7 +151,8 @@ function FriendNotes:OnTooltipSetUnit(tooltip, ...)
     if self.db.profile.showTooltips == false then return end
 
     local name, unitid = tooltip:GetUnit()
-    if _G.UnitExists(unitid) and _G.UnitIsPlayer(unitid) then
+    if unitid and not issecretvalue(unitid) and _G.UnitExists(unitid) and 
+        _G.UnitIsPlayer(unitid) then
         name = _G.GetUnitName(unitid, true) or name
         local note = self:GetFriendNote(name)
         if note then
