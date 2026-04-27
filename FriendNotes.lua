@@ -168,7 +168,7 @@ local function GetTooltipUnitInfo(tooltip, data)
 end
 
 function FriendNotes:OnTooltipSetUnit(tooltip, data, ...)
-    if addon.restricted then return end
+    --if addon.restricted then return end
     if tooltip ~= _G.GameTooltip then return end
     if self.db.profile.showTooltips == false then return end
 
