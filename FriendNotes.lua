@@ -155,12 +155,24 @@ function FriendNotes:OnDisable()
     end
 end
 
-function FriendNotes:OnTooltipSetUnit(tooltip, ...)
+local function GetTooltipUnitInfo(tooltip, data)
+    if C_TooltipInfo and TooltipDataProcessor then
+        local guid = data and data.guid
+        if guid and not addon.issecretvalue(guid) then
+            local unitid = UnitTokenFromGUID(guid)
+            return nil, unitid
+        end
+    else
+        return tooltip:GetUnit()
+    end
+end
+
+function FriendNotes:OnTooltipSetUnit(tooltip, data, ...)
     if addon.restricted then return end
     if tooltip ~= _G.GameTooltip then return end
     if self.db.profile.showTooltips == false then return end
 
-    local name, unitid = tooltip:GetUnit()
+    local name, unitid = GetTooltipUnitInfo(tooltip, data)
     if unitid and not addon.issecretvalue(unitid) and _G.UnitExists(unitid) and
         _G.UnitIsPlayer(unitid) then
         name = _G.GetUnitName(unitid, true) or name
