@@ -194,6 +194,7 @@ function FriendNotes:GetFriendNote(friendName)
 end
 
 function FriendNotes:CHAT_MSG_SYSTEM(event, message)
+    if addon.issecretvalue(message) then return end
     local name = nil
 
     if self.db.profile.showWho == true then
